@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ondira Naboth | Portfolio</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- AOS -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <style>
+    /* ---------------- Theme & Base ---------------- */
+    :root{
+      --bg: #fbfbfe;
+      --surface: rgba(255,255,255,0.65);
+      --muted: #6b7280;
+      --text: #0f172a;
+      --accent-from: #7D5FFF; /* purple */
+      --accent-to: #00D4FF;   /* cyan */
+      --glass-blur: 12px;
+      --card-shadow: 0 12px 36px rgba(2,6,23,0.06);
+      --transition: 320ms cubic-bezier(.2,.9,.2,1);
+    }
+
+    [data-theme="dark"]{
+      --bg: #07070a;
+      --surface: rgba(12,14,20,0.48);
+      --muted: #9aa3b2;
+      --text: #e6eef8;
+      --accent-from: #A18CFF;
+      --accent-to: #4ADDE0;
+      --card-shadow: 0 18px 48px rgba(0,0,0,0.6);
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    /* utility: gradient text */
+    .accent-gradient {
+      background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display:inline-block;
+    }
+
+    /* ---------------- Navbar (glassy) ---------------- */
+    .navbar {
+      background: var(--surface);
+      backdrop-filter: blur(var(--glass-blur));
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background var(--transition), box-shadow var(--transition), border-color var(--transition);
+    }
+    [data-theme="dark"] .navbar {
+      border-bottom-color: rgba(255,255,255,0.03);
+    }
+    .navbar-brand { font-weight:700; }
+    .nav-link { color: var(--text) !important; font-weight:600; }
+    .nav-link:hover { color: var(--accent-to) !important; }
+
+    /* underline effect */
+    .nav-link {
+      position: relative;
+      padding-bottom: .6rem;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 3px;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent-from), var(--accent-to));
+      transition: width .28s var(--transition);
+      opacity: 0.98;
+    }
+    .nav-link:hover::after { width: 100%; }
+
+    /* ---------------- Theme Toggle (polished) ---------------- */
+    .theme-btn {
+      width:44px; height:44px;
+      border-radius:10px;
+      display:inline-grid; place-items:center;
+      border:none; cursor:pointer;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      transition: transform .18s ease, background var(--transition), box-shadow var(--transition);
+      box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+    }
+    .theme-btn:active { transform: scale(.98); }
+
+    .theme-svg { width:20px; height:20px; color: var(--accent-from); transition: color var(--transition), transform .35s cubic-bezier(.2,.9,.2,1); }
+    [data-theme="dark"] .theme-svg { color: var(--accent-to); transform: rotate(180deg) scale(0.98); }
+
+    /* ---------------- Hero ---------------- */
+    .hero {
+      padding: 6rem 1rem 3rem;
+      text-align:center;
+    }
+    .profile-pic {
+      width:116px;height:116px;border-radius:50%;
+      display:inline-block;margin-bottom:1rem;
+      background: linear-gradient(135deg,var(--accent-from),var(--accent-to));
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+      border: 4px solid rgba(255,255,255,0.12);
+      transition: box-shadow var(--transition), transform .25s ease;
+    }
+    .profile-pic:hover { transform: translateY(-6px); box-shadow: 0 30px 60px rgba(0,0,0,0.16); }
+
+    .hero h1 { font-size:2rem; font-weight:700; margin-bottom:.25rem; }
+    .hero p.lead { color:var(--muted); margin-bottom: .8rem; }
+
+    /* Resume CTA */
+    .btn-resume {
+      border-radius:999px;
+      padding: .55rem 1rem;
+      background: linear-gradient(90deg, var(--accent-from), var(--accent-to));
+      color:#fff; border:none;
+      box-shadow: 0 12px 38px rgba(125,95,255,0.12);
+      transition: transform .22s var(--transition), box-shadow .22s var(--transition);
+    }
+    .btn-resume:hover { transform: translateY(-4px); box-shadow: 0 22px 60px rgba(125,95,255,0.16); }
+
+    /* subtle pulsing accent on hero CTA */
+    .btn-resume::after {
+      content: '';
+      position: absolute; left:0; right:0; top:0; bottom:0;
+      border-radius:999px; opacity:0; pointer-events:none;
+    }
+
+    /* ---------------- Section cards (glass) ---------------- */
+    .section-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.64), rgba(255,255,255,0.36));
+      border-radius: 14px;
+      padding: 1.25rem;
+      box-shadow: var(--card-shadow);
+      transition: transform .22s, box-shadow .22s, background var(--transition);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    [data-theme="dark"] .section-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .section-card:hover { transform: translateY(-8px); box-shadow: 0 28px 64px rgba(2,6,23,0.12); }
+
+    .section-heading { font-size:1.125rem; font-weight:700; margin-bottom:.6rem; color:var(--text); }
+
+    /* ---------------- Icon list (replaces emojis) ---------------- */
+    .icon-list { list-style:none; padding-left:0; margin:0; }
+    .icon-list li { display:flex; align-items:center; gap:.7rem; padding:.45rem 0; color:var(--muted); font-weight:600; }
+    .icon-svg { width:20px; height:20px; flex:0 0 20px; color:var(--accent-from); transition: color var(--transition), transform .18s ease; }
+    [data-theme="dark"] .icon-svg { color:var(--accent-to); }
+
+    /* Project list */
+    .project-link { color:var(--accent-from); font-weight:600; text-decoration:none; }
+    .project-link:hover { color:var(--accent-to); text-decoration:underline; }
+
+    /* Contact/social */
+    .social-links a { display:inline-flex; align-items:center; gap:.6rem; margin-right:1rem; color:var(--muted); text-decoration:none; font-weight:600; }
+    .social-links a:hover { color:var(--accent-to); }
+
+    /* Back to top */
+    .back-to-top {
+      position:fixed; right:18px; bottom:18px;
+      width:46px;height:46px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;text-decoration:none;
+      background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+      color:#fff; box-shadow: 0 12px 40px rgba(0,0,0,0.18); transform: translateY(20px); opacity:0; transition: transform .28s, opacity .28s;
+    }
+    .back-to-top.show { transform: translateY(0); opacity:1; }
+
+    /* small responsive tweaks */
+    @media (min-width:992px){ .hero h1{ font-size:2.6rem; } .hero p.lead{ font-size:1.1rem; } }
+  </style>
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand accent-gradient" href="index.html#">Ondira Naboth</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+              aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#skills">Skills</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#education">Education</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#certifications">Certifications</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#experience">Experience</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#languages">Languages</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#interests">Interests</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#projects">Projects</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+        </ul>
+
+        <div class="d-flex align-items-center">
+          <button id="themeToggleBtn" class="theme-btn" aria-pressed="false" aria-label="Toggle theme">
+            <svg id="themeIcon" class="theme-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true">
+              <!-- initial: sun (circle + rays grouped) -->
+              <g id="sun">
+                <circle cx="12" cy="12" r="4"></circle>
+                <g id="rays">
+                  <rect x="11" y="1" width="2" height="3" rx="1"></rect>
+                  <rect x="11" y="20" width="2" height="3" rx="1"></rect>
+                  <rect x="1" y="11" width="3" height="2" rx="1"></rect>
+                  <rect x="20" y="11" width="3" height="2" rx="1"></rect>
+                  <rect x="4.2" y="4.2" width="2" height="3" rx="1" transform="rotate(-45 4.2 4.2)"></rect>
+                  <rect x="17.8" y="16.8" width="2" height="3" rx="1" transform="rotate(-45 17.8 16.8)"></rect>
+                  <rect x="4.2" y="16.8" width="2" height="3" rx="1" transform="rotate(45 4.2 16.8)"></rect>
+                  <rect x="17.8" y="4.2" width="2" height="3" rx="1" transform="rotate(45 17.8 4.2)"></rect>
+                </g>
+              </g>
+              <!-- moon shape (hidden, will show in dark) -->
+              <path id="moon" d="M21 12.8A9 9 0 1111.2 3 6 6 0 0021 12.8z" style="opacity:0; transition: opacity .28s;"></path>
+            </svg>
+          </button>
+
+          <a href="Resume1.pdf" class="btn-resume ms-3" download="Ondira_Naboth_Resume.pdf">Download My Resume</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container text-center">
+      <div class="profile-pic" role="img" aria-label="Profile picture"></div>
+      <h1>Ondira Naboth</h1>
+      <p class="lead typing">AI Quality Auditor & Human-in-the-Loop Data Evaluator | Swahili-English Bilingual Specialist | Cybersecurity Enthusiast</p>
+      <div class="mt-3">
+        <a href="index.html#about" class="btn btn-outline-primary me-2" style="border-radius:999px;">Learn more</a>
+        <a href="Resume1.pdf" class="btn-resume" download>Download Resume</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="mb-5">
+    <!-- ABOUT -  -->
+    <section id="about" class="container my-5" data-aos="fade-up">
+      <div class="section-card">
+        <h2 class="section-heading">Professional Profile</h2>
+        <p>Swahili-English bilingual AI Quality Auditor and Human-in-the-Loop (HITL) Data Evaluator with strong experience in quality audits, guideline-based evaluation, and root cause analysis for multilingual AI training projects. Proven ability to review, validate, and improve dataset quality while ensuring semantic accuracy, cultural relevance, and compliance with complex specifications. Strong analytical mindset with a background in Information Systems and AI fundamentals.</p>
+      </div>
+    </section>
+
+    <!-- SKILLS - UPDATED WITH RESUME COMPETENCIES -->
+    <section id="skills" class="container my-5" data-aos="fade-up">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="section-card h-100">
+            <h3 class="section-title">AI & Quality Assurance</h3>
+            <ul class="icon-list mt-2">
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M21 6v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Quality Audits & QA Queues Review</li>
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 3h4v4h-4zM1 3h4v4H1zM19 17h4v4h-4zM1 17h4v4H1zM7 3h10v4H7zM7 17h10v4H7z"/></svg>Root Cause Analysis (RCA) & Performance Trends</li>
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Swahili & English Linguistic Validation</li>
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M21 6v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2z"/></svg>AI Data Review, Verification & Validation</li>
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Transcription & Speech Quality Evaluation (Swahili)</li>
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M21 6v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Intent Classification & Sentiment Analysis</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="section-card h-100">
+            <h3 class="section-title">Technical & Evaluation Skills</h3>
+            <ul class="icon-list mt-2">
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Localization & Cultural Accuracy Review</li>
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M21 6v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Guideline Adherence & Edge Case Identification</li>
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Training Feedback & Continuous Improvement</li>
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h18v18H3z"/></svg>Microsoft Excel</li>
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h18v18H3z"/></svg>Microsoft PowerPoint</li>
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Google Workspace</li>
+              <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 1l8 4v6c0 5-3.9 9.7-8 11-4.1-1.3-8-6-8-11V5l8-4z"/></svg>Cybersecurity Fundamentals</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION - UPDATED WITH RESUME EDUCATION -->
+    <section id="education" class="container my-5" data-aos="fade-up">
+      <div class="section-card">
+        <h2 class="section-heading">Education</h2>
+        <ul class="icon-list mt-2">
+          <li>
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/>
+            </svg>
+            <div>
+              <strong>Bachelor of Commerce (Information Systems)</strong><br>
+              Egerton University, Kenya | March 2020 - November 2025
+            </div>
+          </li>
+        </ul>
+        <a href="Resume1.pdf" download="Ondira_Naboth_Resume.pdf" class="btn-resume mt-3 d-inline-block">Download My Resume (PDF)</a>
+      </div>
+    </section>
+
+    <!-- CERTIFICATIONS - UPDATED WITH RESUME CERTIFICATION -->
+    <section id="certifications" class="container my-5" data-aos="fade-up">
+      <div class="section-card">
+        <h2 class="section-heading">Certifications</h2>
+        <ul class="icon-list mt-2">
+          <li>
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/>
+            </svg>
+            <div>
+              <strong>AI Associate Certification</strong><br>
+              Oracle University | August 2025 - November 2025
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -  -->
+    <section id="experience" class="container my-5" data-aos="fade-up">
+      <div class="section-card">
+        <h2 class="section-heading">Professional Experience</h2>
+        
+        <div class="mb-4">
+          <h4 class="section-title">AI Language Data Evaluator / Quality Assurance Auditor</h4>
+          <p class="text-muted mb-2"><strong>Independent Contractor - Remote</strong> | Jan 2024 - Present</p>
+          <ul class="icon-list mt-2">
+            <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Conduct quality audits on Swahili and English text and audio datasets to ensure compliance with project guidelines</li>
+            <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Review and validate semantic accuracy, intent alignment, tone preservation, and grammatical correctness</li>
+            <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Perform transcription and speech-quality evaluation for Swahili audio content, including speaker differentiation</li>
+            <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Identify edge cases, inconsistencies, and guideline deviations, providing structured QA feedback</li>
+            <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Support continuous improvement through documented findings and corrective recommendations</li>
+          </ul>
+        </div>
+        
+        <div class="mb-4">
+          <h4 class="section-title">LLM Operations & Evaluation Specialist</h4>
+          <p class="text-muted mb-2"><strong>Zone1Kenya - Kisumu, Kenya</strong> | Oct 2024 - Oct 2025</p>
+          <ul class="icon-list mt-2">
+            <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Supported evaluation pipelines for large language model output quality and reliability</li>
+            <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Conducted structured reviews of model responses against defined quality benchmarks</li>
+            <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Maintained organized workflows for dataset versioning, evaluation results, and feedback reporting</li>
+            <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Collaborated with technical teams to improve consistency and evaluation accuracy</li>
+          </ul>
+        </div>
+        
+        <div class="mb-4">
+          <h4 class="section-title">Cybersecurity Intern</h4>
+          <p class="text-muted mb-2"><strong>National Cereals and Produce Board - Kenya</strong> | Jan 2024 - Aug 2024</p>
+          <ul class="icon-list mt-2">
+            <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Monitored system logs and alerts to identify anomalies and potential risks</li>
+            <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Assisted in vulnerability assessments, compliance checks, and procedural documentation</li>
+            <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Applied attention to detail and process accuracy transferable to quality assurance roles</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- LANGUAGES - NEW SECTION FROM RESUME -->
+    <section id="languages" class="container my-5" data-aos="fade-up">
+      <div class="section-card">
+        <h2 class="section-heading">Languages</h2>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="d-flex align-items-center mb-3">
+              <svg class="icon-svg me-3" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/>
+              </svg>
+              <div>
+                <h5 class="mb-0">English</h5>
+                <p class="text-muted mb-0">Fluent</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex align-items-center mb-3">
+              <svg class="icon-svg me-3" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/>
+              </svg>
+              <div>
+                <h5 class="mb-0">Swahili</h5>
+                <p class="text-muted mb-0">Fluent</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERESTS -  -->
+    <section id="interests" class="container my-5" data-aos="fade-up">
+      <div class="section-card">
+        <h2 class="section-heading">Interests</h2>
+        <ul class="icon-list mt-2">
+          <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Modern Web Development (React, Next.js, Tailwind)</li>
+          <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Blockchain and Fintech Innovation</li>
+          <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>UX/UI Design and Branding</li>
+          <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>Automated Testing and CI/CD</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="container my-5" data-aos="fade-up">
+      <div class="section-card">
+        <h2 class="section-heading">Projects</h2>
+        <ul class="projects icon-list mt-2">
+          <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg><a class="project-link" href="https://github.com/ondiranaboth/devfolio" target="_blank">DevFolio</a> - A sleek personal portfolio with dynamic dark/light mode support.</li>
+          <li><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg><a class="project-link" href="https://github.com/ondiranaboth/ecommerce-ui" target="_blank">E-Commerce UI</a> - Custom React-based UI...</li>
+        </ul>
+      </div>
+    </section>
+
+    <!--CONTACT INFO -->
+    <section id="contact" class="container my-5" data-aos="fade-up">
+      <div class="section-card">
+        <h2 class="section-heading">Contact Me</h2>
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <div class="contact-info">
+              <h4 class="mb-3">Contact Information</h4>
+              <div class="mb-3">
+                <svg class="icon-svg me-2" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                  <path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/>
+                </svg>
+                <strong>Location:</strong> Kisumu, Kenya | Open to Relocation
+              </div>
+              <div class="mb-3">
+                <svg class="icon-svg me-2" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                  <path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/>
+                </svg>
+                <strong>Work Preference:</strong> Remote / Onsite
+              </div>
+              <div class="mb-3">
+                <svg class="icon-svg me-2" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                  <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10z"/>
+                </svg>
+                <strong>Email:</strong> ondiranaboth@gmail.com
+              </div>
+            </div>
+            
+            <div class="social-links mt-4">
+              <a href="mailto:ondiranaboth@gmail.com"><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M2 4v16h20V4H2zm18 2l-8 5-8-5V6l8 5 8-5v0z"/></svg> Email</a>
+              <a href="tel:+25411556208"><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2a1 1 0 01.9-.3c1 .2 2 .3 2.9.3a1 1 0 011 1V20a1 1 0 01-1 1A18 18 0 013 5a1 1 0 011-1h2.6a1 1 0 011 1c0 .9.1 1.9.3 2.9.1.4 0 .8-.3.9L6.6 10.8z"/></svg> Call</a>
+              <a href="https://wa.me/25411556208" target="_blank"><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.5 15.2L2 22l4.9-1.5A10 10 0 1012 2zM7.3 9.7c.2-.5.9-.9 1.5-.9.5 0 .9.1 1.2.3.3.2.6.6.9.9.2.3.3.6.3 1 0 .6-.5 1.3-1 1.6-.4.3-.8.4-1.2.8-.3.3-.4.6-.4 1.1 0 .7.4 1.1 1.2 1.6 1 .6 2.3.9 3.5.9.7 0 1.3-.1 2-.4a6 6 0 00-6.6-8.9z"/></svg> WhatsApp</a>
+              <a href="https://www.linkedin.com/in/ondira-naboth-a7a843318" target="_blank"><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM8.5 18H6V9h2.5v9zM7.2 7.7c-.8 0-1.3-.6-1.3-1.3 0-.8.6-1.3 1.3-1.3s1.3.6 1.3 1.3c0 .8-.5 1.3-1.3 1.3zM18 18h-2.5v-4.3c0-1-.4-1.7-1.2-1.7-.7 0-1.1.5-1.3 1V18H10v-9h2.4v1.2c.3-.5 1-1.2 2.2-1.2 1.6 0 2.8 1 2.8 3.3V18z"/></svg> LinkedIn</a>
+              <a href="https://github.com/blake2828" target="_blank"><svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5A11.5 11.5 0 002.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.3-3.9-1.3-.5-1.3-1.2-1.6-1.2-1.6-1-.7.1-.7.1-.7 1.2.1 1.8 1.3 1.8 1.3 1 .1 1.6.7 1.8.9.1-.6.4-1 .8-1.2-2.5-.3-5.2-1.2-5.2-5.3 0-1.2.4-2.1 1.1-2.8-.1-.3-.5-1.3.1-2.8 0 0 .9-.3 2.9 1.1A10 10 0 0112 6.8c.9 0 1.9.1 2.8.4 2-1.5 2.9-1.1 2.9-1.1.6 1.5.2 2.5.1 2.8.7.7 1.1 1.6 1.1 2.8 0 4.1-2.8 4.9-5.2 5.2.4.3.7.8.7 1.6v2.3c0 .3.2.7.8.6A11.5 11.5 0 0021.5 12 11.5 11.5 0 0012 .5z"/></svg> GitHub</a>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <form action="https://formsubmit.co/ondiranaboth@gmail.com" method="POST">
+              <div class="mb-3">
+                <input type="text" name="name" class="form-control" placeholder="Your Name" required />
+              </div>
+              <div class="mb-3">
+                <input type="email" name="email" class="form-control" placeholder="Your Email" required />
+              </div>
+              <div class="mb-3">
+                <textarea name="message" rows="5" class="form-control" placeholder="Your Message" required></textarea>
+              </div>
+              <button type="submit" class="btn-resume w-100">Send Message</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    </section>
+  </main>
+
+  <footer class="text-center py-4">
+    <p>&copy; 2026 Ondira Naboth. All rights reserved.</p>
+    <p class="small text-muted">Kisumu, Kenya | Open to Relocation | Remote / Onsite</p>
+  </footer>
+
+  <a href="index.html#" class="back-to-top" title="Back to top" aria-label="Back to top"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg></a>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+  <script>
+    AOS.init({ duration: 700, once: true });
+
+    // Theme handling (html[data-theme])
+    const htmlEl = document.documentElement;
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const sunGroup = document.getElementById('sun');
+    const moonPath = document.getElementById('moon');
+
+    // init from localStorage or system preference
+    const saved = localStorage.getItem('ondira_theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (saved === 'dark' || (!saved && prefersDark)) {
+      htmlEl.setAttribute('data-theme','dark');
+      themeBtn.setAttribute('aria-pressed','true');
+    } else {
+      htmlEl.setAttribute('data-theme','light');
+      themeBtn.setAttribute('aria-pressed','false');
+    }
+
+    // helper to animate icon swap
+    function updateIcon(theme) {
+      if (!sunGroup || !moonPath) return;
+      if (theme === 'dark') {
+        sunGroup.style.transition = 'opacity .28s';
+        sunGroup.style.opacity = '0';
+        moonPath.style.transition = 'opacity .28s';
+        moonPath.style.opacity = '1';
+      } else {
+        sunGroup.style.opacity = '1';
+        moonPath.style.opacity = '0';
+      }
+    }
+    updateIcon(htmlEl.getAttribute('data-theme'));
+
+    // toggle with smooth transition
+    themeBtn.addEventListener('click', () => {
+      const current = htmlEl.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+
+      // smooth cross-fade overlay (tiny)
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.inset = 0;
+      overlay.style.background = current === 'light' ? '#fff' : '#000';
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+      overlay.style.transition = 'opacity 260ms ease';
+      document.body.appendChild(overlay);
+      requestAnimationFrame(()=> overlay.style.opacity = '0.06');
+
+      setTimeout(() => {
+        htmlEl.setAttribute('data-theme', next);
+        localStorage.setItem('ondira_theme', next);
+        themeBtn.setAttribute('aria-pressed', next === 'dark' ? 'true' : 'false');
+        updateIcon(next);
+        overlay.style.opacity = '0';
+        setTimeout(()=> overlay.remove(), 300);
+      }, 180);
+    });
+
+    // Back to top show/hide
+    const backToTop = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 520) backToTop.classList.add('show'); else backToTop.classList.remove('show');
+    });
+    backToTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Smooth anchor scrolling (account for sticky nav)
+    document.querySelectorAll('a.nav-link[href^="#"]').forEach(link => {
+      link.addEventListener('click', function(e){
+        const targetId = this.getAttribute('href').slice(1);
+        const target = document.getElementById(targetId);
+        if (target) {
+          e.preventDefault();
+          const navbarHeight = document.querySelector('.navbar').offsetHeight;
+          const top = target.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 12;
+          window.scrollTo({ top, behavior: 'smooth' });
+          // collapse mobile menu
+          const collapse = document.querySelector('.navbar-collapse');
+          if (collapse && collapse.classList.contains('show')) {
+            bootstrap.Collapse.getInstance(collapse)?.hide();
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
